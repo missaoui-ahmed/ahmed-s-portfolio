@@ -1,3 +1,3 @@
 - [x] Verify all portfolio claims against the uploaded CV and brief.
-- [ ] Build the single-page portfolio, case studies, responsive navigation, and real CV download.
+- [x] Build the single-page portfolio, case studies, responsive navigation, and real CV download.
 - [ ] Verify desktop/mobile rendering, interactions, and metadata.
