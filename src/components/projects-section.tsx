@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ProjectArchitecture } from "@/components/project-architecture";
 import { contact, projects } from "@/data/portfolio";
 
-const [featured, ...otherProjects] = projects;
+const featured = projects[0];
+const otherProjects = projects.slice(1);
 
 function ProjectActions({ slug }: { slug: string }) {
   return <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -14,6 +15,7 @@ function ProjectActions({ slug }: { slug: string }) {
 }
 
 export function ProjectsSection() {
+  if (!featured) return null;
   return <section id="projects" className="relative scroll-mt-16 overflow-hidden border-b border-line py-20 md:py-28">
     <div aria-hidden="true" className="ambient-grid pointer-events-none absolute inset-x-0 top-0 h-[700px] opacity-20" />
     <div className="page-shell relative">

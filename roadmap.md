@@ -1,5 +1,5 @@
 - [x] Verify all portfolio claims against the uploaded CV and brief.
 - [x] Build the single-page portfolio, case studies, responsive navigation, and real CV download.
 - [x] Verify desktop/mobile rendering, interactions, and metadata.
-- [ ] Refine only the Projects section and case-study presentation around CV-verified technical evidence.
-- [ ] Verify project layouts and case-study navigation on desktop and mobile.
+- [x] Refine only the Projects section and case-study presentation around CV-verified technical evidence.
+- [x] Verify project layouts and case-study navigation on desktop and mobile.
