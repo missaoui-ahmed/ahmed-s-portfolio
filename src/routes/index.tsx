@@ -4,7 +4,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight, BriefcaseBusiness, Check, Code2, D
 import { Button } from "@/components/ui/button";
 import { ProjectsSection } from "@/components/projects-section";
 import cvAsset from "@/assets/Ahmed-Missaoui-CV.pdf.asset.json";
-import { certifications, contact, education, experience, navigation, projects, services, skills } from "@/data/portfolio";
+import { certifications, contact, education, experience, navigation, services, skills } from "@/data/portfolio";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
