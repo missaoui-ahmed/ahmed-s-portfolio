@@ -66,7 +66,7 @@
 
 @utility page-shell { width: min(100% - 48px, 1320px); margin-inline: auto; }
 @utility mono-label { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
-@utility section-space { padding-block: clamp(84px, 9vw, 146px); }
+@utility section-space { padding-block: clamp(64px, 9vw, 146px); }
 @utility text-balance { text-wrap: balance; }
 
 .site-header { background: color-mix(in oklch, var(--background) 92%, transparent); backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); }
@@ -79,5 +79,9 @@
 .timeline-line { background: linear-gradient(to bottom, var(--primary), var(--line)); }
 .reveal { animation: rise-in .7s ease both; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-@media (max-width: 640px) { .page-shell { width: min(100% - 36px, 1320px); } }
+@media (max-width: 640px) {
+  .page-shell { width: min(100% - 36px, 1320px); }
+  .ambient-grid { background-size: 48px 48px; opacity: .16; }
+  input, textarea { font-size: 16px; }
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
