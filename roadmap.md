@@ -3,3 +3,4 @@
 - [x] Verify desktop/mobile rendering, interactions, and metadata.
 - [x] Refine only the Projects section and case-study presentation around CV-verified technical evidence.
 - [x] Verify project layouts and case-study navigation on desktop and mobile.
+- [x] Recompose and verify the complete portfolio at 320px, 375px, 390px, and 430px.
