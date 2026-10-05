@@ -1,7 +1,7 @@
-import documentImage from "@/assets/project-document.jpg";
-import booksImage from "@/assets/project-books.jpg";
-import platformImage from "@/assets/project-platform.jpg";
-import robotImage from "@/assets/project-robot.jpg";
+import documentImage from "@/assets/project-document.webp";
+import booksImage from "@/assets/project-books.webp";
+import platformImage from "@/assets/project-platform.webp";
+import robotImage from "@/assets/project-robot.webp";
 
 export const contact = {
   email: "missaouiiahmed@gmail.com",
