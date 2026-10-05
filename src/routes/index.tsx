@@ -7,14 +7,22 @@ import cvAsset from "@/assets/Ahmed-Missaoui-CV.pdf.asset.json";
 import { certifications, contact, education, experience, navigation, services, skills } from "@/data/portfolio";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [
-    { title: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
-    { name: "description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and backend architectures." },
-    { property: "og:title", content: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
-    { property: "og:description", content: "Explore the full-stack and AI systems work of Software Engineer Ahmed Missaoui." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }), component: Index,
+  head: () => ({
+    meta: [
+      { title: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
+      { name: "description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
+      { property: "og:title", content: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
+      { property: "og:description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
+      { property: "og:type", content: "profile" },
+      { property: "og:url", content: "/" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
+      { name: "twitter:description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
+    ],
+    // Canonical placeholder: relative until a public domain exists.
+    links: [{ rel: "canonical", href: "/" }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Person", name: "Ahmed Missaoui", jobTitle: "Software Engineer", email: "mailto:" + contact.email, sameAs: [contact.github, contact.linkedin] }) }],
+  }), component: Index,
 });
 
 function SectionHeading({ eyebrow, title, description }: { eyebrow: string; title: string; description?: string }) {

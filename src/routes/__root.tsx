@@ -79,12 +79,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ahmed Missaoui | Software Engineer" },
-      { name: "description", content: "Portfolio of Ahmed Missaoui, Software Engineer specializing in Full-Stack Development and AI Systems." },
+      { title: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
+      { name: "description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
       { name: "author", content: "Ahmed Missaoui" },
-      { property: "og:title", content: "Ahmed Missaoui | Software Engineer" },
-      { property: "og:description", content: "Full-Stack Development and AI Systems portfolio of Ahmed Missaoui." },
-      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Ahmed Missaoui" },
+            { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
