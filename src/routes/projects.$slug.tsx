@@ -6,7 +6,11 @@ import { contact, projects } from "@/data/portfolio";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: ({ params }) => { const project = projects.find(p => p.slug === params.slug); if (!project) throw notFound(); return project; },
-  head: ({ loaderData }) => ({ meta: [
+  head: ({ loaderData, params }) => ({ links: [{ rel: "canonical", href: `/projects/${params.slug}` }], meta: [
+    ...(loaderData ? [] : [{ name: "robots", content: "noindex" }]),
+    { property: "og:url", content: `/projects/${params.slug}` },
+    { name: "twitter:title", content: loaderData ? `${loaderData.title} | Ahmed Missaoui` : "Project not found | Ahmed Missaoui" },
+    { name: "twitter:description", content: loaderData?.description ?? "Explore software engineering projects by Ahmed Missaoui." },
     { title: loaderData ? `${loaderData.title} | Ahmed Missaoui` : "Project not found | Ahmed Missaoui" },
     { name: "description", content: loaderData?.description ?? "Explore software engineering projects by Ahmed Missaoui." },
     { property: "og:title", content: loaderData ? `${loaderData.title} | Ahmed Missaoui` : "Project not found | Ahmed Missaoui" },
