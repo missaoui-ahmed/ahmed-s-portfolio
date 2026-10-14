@@ -21,13 +21,13 @@ export function ProjectsSection() {
     <div className="page-shell relative">
       <header className="mb-10 flex flex-col justify-between gap-4 border-b border-line pb-7 sm:mb-12 sm:gap-5 sm:pb-9 md:mb-16 md:flex-row md:items-end">
         <div><p className="mono-label mb-4 text-primary sm:mb-5">05 / SELECTED WORK</p><h2 className="max-w-3xl text-3xl font-semibold leading-[1.14] sm:text-4xl md:text-5xl">Projects, in practice<span className="text-primary">.</span></h2></div>
-        <p className="max-w-sm text-[13px] leading-6 text-muted-foreground sm:text-sm sm:leading-7">Engineering work from internships and a final-year project. Visuals are conceptual illustrations, not product screenshots.</p>
+        <p className="max-w-sm text-[13px] leading-6 text-muted-foreground sm:text-sm sm:leading-7">Engineering work from internships and a final-year project. The featured DocuAI visual is a product screenshot; the others are conceptual illustrations.</p>
       </header>
 
       <article className="border-b border-line pb-12 sm:pb-16 md:pb-20">
         <div className="mb-5 grid grid-cols-[minmax(0,1fr)_auto] gap-3 font-mono text-[10px] leading-5 text-primary sm:mb-6 sm:text-xs"><span>01 / FEATURED CASE STUDY</span><span className="text-right">{featured.category}</span></div>
         <div className="grid items-center gap-7 sm:gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,.88fr)] lg:gap-14">
-          <Link to="/projects/$slug" params={{ slug: featured.slug }} className="project-visual group block overflow-hidden rounded-sm border border-border" aria-label={`View case study: ${featured.title}`}><img src={featured.image} alt={featured.alt} width={1200} height={800} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /></Link>
+          <Link to="/projects/$slug" params={{ slug: featured.slug }} className="project-visual group block overflow-hidden rounded-sm border border-border" aria-label={`View case study: ${featured.title}`}><img src={featured.image} alt={featured.alt} width={1200} height={800} loading="lazy" decoding="async" className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" /></Link>
           <div className="min-w-0">
             <p className="mono-label mb-4 text-muted-foreground sm:mb-5">VERMEG · AI FULL-STACK DEVELOPER INTERN</p>
             <h3 className="max-w-xl text-balance text-2xl font-semibold leading-[1.15] sm:text-3xl md:text-4xl xl:text-5xl">{featured.title}</h3>
