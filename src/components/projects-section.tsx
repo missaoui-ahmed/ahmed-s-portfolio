@@ -17,7 +17,6 @@ function ProjectActions({ slug }: { slug: string }) {
 export function ProjectsSection() {
   if (!featured) return null;
   return <section id="projects" className="relative scroll-mt-16 overflow-hidden border-b border-line py-16 sm:py-20 md:py-28">
-    <div aria-hidden="true" className="ambient-grid pointer-events-none absolute inset-x-0 top-0 h-[700px] opacity-20" />
     <div className="page-shell relative">
       <header className="mb-10 flex flex-col justify-between gap-4 border-b border-line pb-7 sm:mb-12 sm:gap-5 sm:pb-9 md:mb-16 md:flex-row md:items-end">
         <div><p className="mono-label mb-4 text-primary sm:mb-5">05 / SELECTED WORK</p><h2 className="max-w-3xl text-3xl font-semibold leading-[1.14] sm:text-4xl md:text-5xl">Projects, in practice<span className="text-primary">.</span></h2></div>
