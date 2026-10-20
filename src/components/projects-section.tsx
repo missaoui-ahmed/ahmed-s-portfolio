@@ -7,6 +7,11 @@ import { contact, projects } from "@/data/portfolio";
 const featured = projects[0];
 const otherProjects = projects.slice(1);
 
+const cardAspect: Record<string, string> = {
+  wide: "aspect-[16/9]",
+  standard: "aspect-[16/10] sm:aspect-[3/2]",
+};
+
 function ProjectActions({ slug }: { slug: string }) {
   return <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
     <Button variant="portfolioText" asChild><Link to="/projects/$slug" params={{ slug }}>Read case study <ArrowUpRight /></Link></Button>
@@ -20,7 +25,7 @@ export function ProjectsSection() {
     <div className="page-shell relative">
       <header className="mb-10 flex flex-col justify-between gap-4 border-b border-line pb-7 sm:mb-12 sm:gap-5 sm:pb-9 md:mb-16 md:flex-row md:items-end">
         <div><p className="mono-label mb-4 text-primary sm:mb-5">05 / SELECTED WORK</p><h2 className="max-w-3xl text-3xl font-semibold leading-[1.14] sm:text-4xl md:text-5xl">Projects, in practice<span className="text-primary">.</span></h2></div>
-        <p className="max-w-sm text-[13px] leading-6 text-muted-foreground sm:text-sm sm:leading-7">Engineering work from internships and a final-year project. The featured DocuAI visual is a product screenshot; the others are conceptual illustrations.</p>
+        <p className="max-w-sm text-[13px] leading-6 text-muted-foreground sm:text-sm sm:leading-7">Engineering work from internships and a final-year project. The DocuAI and ATPU visuals are product screenshots; the others are conceptual illustrations.</p>
       </header>
 
       <article className="border-b border-line pb-12 sm:pb-16 md:pb-20">
@@ -42,7 +47,7 @@ export function ProjectsSection() {
 
       <div className="divide-y divide-line">
         {otherProjects.map((project, index) => <article key={project.slug} className="grid gap-6 py-10 first:pt-12 sm:gap-7 sm:py-12 sm:first:pt-14 md:gap-10 md:py-16 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] lg:gap-14">
-          <div className="min-w-0"><div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 font-mono text-[10px] leading-5 text-primary sm:mb-5 sm:text-xs"><span>0{index + 2} / CASE STUDY</span><span className="text-right">{project.category}</span></div><Link to="/projects/$slug" params={{ slug: project.slug }} className="project-visual group block overflow-hidden rounded-sm border border-border" aria-label={`View case study: ${project.title}`}><img src={project.image} alt={project.alt} width={1200} height={800} loading="lazy" decoding="async" className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-[1.025] sm:aspect-[3/2]" /></Link></div>
+          <div className="min-w-0"><div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 font-mono text-[10px] leading-5 text-primary sm:mb-5 sm:text-xs"><span>0{index + 2} / CASE STUDY</span><span className="text-right">{project.category}</span></div><Link to="/projects/$slug" params={{ slug: project.slug }} className="project-visual group block overflow-hidden rounded-sm border border-border" aria-label={`View case study: ${project.title}`}><img src={project.image} alt={project.alt} width={1200} height={800} loading="lazy" decoding="async" className={`w-full object-cover transition-transform duration-500 group-hover:scale-[1.025] ${cardAspect[project.cardAspect] ?? cardAspect['standard']}`} /></Link></div>
           <div className="flex min-w-0 flex-col justify-center"><h3 className="text-balance text-xl font-semibold leading-tight sm:text-2xl md:text-3xl">{project.title}</h3><p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{project.description}</p>
             <div className="mt-6 grid gap-5 border-t border-line pt-5 sm:grid-cols-2"><div><p className="mono-label mb-2 text-primary">Problem</p><p className="text-sm leading-6 text-muted-foreground">{project.problem}</p></div><div><p className="mono-label mb-2 text-primary">Solution</p><p className="text-sm leading-6 text-muted-foreground">{project.solution}</p></div></div>
             <div className="mt-5 border-t border-line pt-5"><p className="mono-label mb-2 text-primary">My contribution</p><p className="text-sm leading-6 text-muted-foreground">{project.contribution}</p></div>
