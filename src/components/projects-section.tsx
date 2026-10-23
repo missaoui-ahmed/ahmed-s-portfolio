@@ -25,7 +25,7 @@ export function ProjectsSection() {
     <div className="page-shell relative">
       <header className="mb-10 flex flex-col justify-between gap-4 border-b border-line pb-7 sm:mb-12 sm:gap-5 sm:pb-9 md:mb-16 md:flex-row md:items-end">
         <div><p className="mono-label mb-4 text-primary sm:mb-5">05 / SELECTED WORK</p><h2 className="max-w-3xl text-3xl font-semibold leading-[1.14] sm:text-4xl md:text-5xl">Projects, in practice<span className="text-primary">.</span></h2></div>
-        <p className="max-w-sm text-[13px] leading-6 text-muted-foreground sm:text-sm sm:leading-7">Engineering work from internships and a final-year project. The DocuAI and ATPU visuals are product screenshots; the others are conceptual illustrations.</p>
+        <p className="max-w-sm text-[13px] leading-6 text-muted-foreground sm:text-sm sm:leading-7">Engineering work from internships and a final-year project. The DocuAI, BookHaven and ATPU visuals are product screenshots; the robot visual is a conceptual illustration.</p>
       </header>
 
       <article className="border-b border-line pb-12 sm:pb-16 md:pb-20">
