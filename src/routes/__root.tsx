@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Schibsted+Grotesk:wght@400..700&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -103,11 +103,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Runs before first paint. When motion is allowed it adds `pipeline-anim`, which hides the hero
+// pipeline until its client timeline plays. If the timeline never mounts (script failure), the
+// class is removed after 4s so the server-rendered final state shows. No JS: never added.
+const pipelineMotionScript = `try{var d=document.documentElement;if(!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("pipeline-anim");setTimeout(function(){if(!d.hasAttribute("data-pipeline-ready"))d.classList.remove("pipeline-anim")},4000)}}catch(e){}`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning: the inline script below changes <html>'s class before hydration.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: pipelineMotionScript }} />
       </head>
       <body>
         {children}

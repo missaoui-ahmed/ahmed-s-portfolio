@@ -7,6 +7,7 @@
 @theme inline {
   --font-sans: "Manrope", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Schibsted Grotesk", "Manrope", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -72,17 +73,56 @@
 .site-header { background: color-mix(in oklch, var(--background) 92%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
 .ambient-grid { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 72px 72px; mask-image: linear-gradient(to bottom, black, transparent 95%); }
 .topo-texture { background-image: url("/topo.svg"); background-size: 900px 900px; background-repeat: repeat; }
-.profile-frame { border-radius: 112px 8px 112px 8px; box-shadow: inset 0 0 0 1px var(--border), 0 20px 80px oklch(0.07 0 0 / 20%); }
-.avatar-mark { background: radial-gradient(circle at 25% 20%, var(--accent), var(--surface-strong)); border: 1px solid var(--primary); }
 .project-visual { background: var(--surface); overflow: hidden; }
 .project-visual img { transition: transform .5s ease; backface-visibility: hidden; }
 .project-card:hover .project-visual img { transform: scale(1.045); }
 .timeline-line { background: linear-gradient(to bottom, var(--primary), var(--line)); }
-.reveal { animation: rise-in .7s ease both; }
-@keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 640px) {
   .page-shell { width: min(100% - 36px, 1320px); }
   .ambient-grid { background-size: 48px 48px; opacity: .16; }
   input, textarea { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+/* Hero: headline and the DocuAI pipeline (src/components/hero). */
+.hero-headline { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(1.95rem, 8.6vw, 3.25rem); line-height: 1.06; letter-spacing: -0.022em; text-wrap: balance; }
+.hero-pipeline { margin: 2.5rem 0 0; color: var(--muted-foreground); }
+.pipeline-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.pipeline-step { position: relative; display: grid; grid-template-columns: 1.25rem 4.5rem minmax(0, 1fr); column-gap: .875rem; align-items: center; min-height: 3.5rem; }
+.pipeline-rail { position: relative; grid-column: 1; grid-row: 1; align-self: stretch; }
+.pipeline-glyph { grid-column: 2; grid-row: 1; }
+.pipeline-text { grid-column: 3; grid-row: 1; margin: 0; display: flex; align-items: baseline; gap: .625rem; font-family: var(--font-display); }
+.pipeline-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.pipeline-dot { position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--primary); }
+.pipeline-seg { position: absolute; left: 50%; top: 50%; width: 1.5px; height: 100%; margin-left: -.75px; background: var(--primary); opacity: .55; transform-origin: top; }
+.pipeline-num { min-width: 1.5em; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--primary); }
+.pipeline-label { font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--foreground); }
+.pipeline-caption { margin-top: 1.25rem; max-width: 62ch; font-size: 13px; line-height: 1.5; color: var(--muted-foreground); }
+.pipeline-stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pipeline-faint { stroke-opacity: .35; }
+.pipeline-brace { font-family: var(--font-mono); font-size: 40px; fill: currentColor; }
+.hero-pipeline svg [data-a] { transform-box: fill-box; transform-origin: center; }
+.hero-pipeline [data-dim] { opacity: .35; }
+
+@media (min-width: 1024px) {
+  .hero-headline { font-size: clamp(3.25rem, 4.4vw, 4rem); line-height: 1.04; }
+  .hero-pipeline { margin-top: 3.5rem; }
+  .pipeline-list { grid-template-columns: repeat(var(--stages), minmax(0, 1fr)); }
+  .pipeline-step { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1.25rem auto; row-gap: .75rem; align-items: start; align-content: start; padding-right: 1rem; }
+  .pipeline-glyph, .pipeline-rail, .pipeline-text { grid-column: 1; }
+  .pipeline-glyph { grid-row: 1; max-width: 7.5rem; }
+  .pipeline-rail { grid-row: 2; }
+  .pipeline-text { grid-row: 3; flex-direction: column; gap: .3rem; }
+  .pipeline-dot { left: 4.5px; }
+  .pipeline-seg { left: 4.5px; width: calc(100% + 1rem); height: 1.5px; margin: -.75px 0 0; transform-origin: left; }
+}
+
+/* Hero and header buttons: the shared Button swaps the outline for a 1px ring that disappears on the
+   teal fill, so these get a clear outline. Unlayered, so it wins over the Tailwind utility. */
+.hero-action:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+/* Pre-animation state, only while <html> has .pipeline-anim (see __root.tsx). */
+.pipeline-anim .hero-pipeline [data-a], .pipeline-anim .hero-pipeline .pipeline-dot { opacity: 0; }
+.pipeline-anim .hero-pipeline .pipeline-num { opacity: .35; }
+.pipeline-anim .hero-pipeline .pipeline-label { opacity: .45; }
+.pipeline-anim .hero-pipeline .pipeline-seg { transform: scaleY(0); }
+@media (min-width: 1024px) { .pipeline-anim .hero-pipeline .pipeline-seg { transform: scaleX(0); } }

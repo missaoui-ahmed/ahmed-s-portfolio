@@ -42,6 +42,18 @@ export const projects = [
   { slug: "reception-robot", title: "Intelligent Reception Robot", category: "Robotics / Computer Vision", cardAspect: "portrait", description: "A reception robot prototype integrating computer vision, voice commands and object detection.", image: robotPhoto.url, alt: "Photograph of the built reception robot prototype: a 3D-printed enclosure with a circular ventilation mesh, a camera head on a ribbon-cable hinge above it, a white speaker unit and a circular base", visualNote: "Prototype photograph · built device", tags: ["Python", "Raspberry Pi", "OpenCV", "Computer Vision"], context: "Developed as a final-year project internship at Euro Tech Conseil.", problem: "Integrating visual recognition and voice commands in a reception robot prototype.", solution: "A Python and Raspberry Pi prototype using OpenCV for face recognition and object detection alongside voice commands.", contribution: "Developed a functional prototype using Python and Raspberry Pi, integrating face recognition, voice commands and object detection with OpenCV.", implementation: "Delivered technical documentation and a deployment setup.", architecture: ["Raspberry Pi", "Python", "OpenCV: face & object recognition", "Voice commands"] },
 ];
 
+// The hero's signature project; its pipeline stages come from architecture, never from hero copy.
+export const signatureProject = projects[0] as (typeof projects)[number];
+
+export const hero = {
+  headline: "Ahmed Missaoui builds full-stack web apps and the AI systems behind them.",
+  intro: "I'm a software engineer in Tunisia. At Vermeg I developed a document extraction platform with React, FastAPI and multi-agent RAG. This is its pipeline.",
+  caption: `Architecture of the ${signatureProject.title}, drawn as a diagram rather than live output.`,
+  cvLabel: "Download CV",
+  caseStudyLabel: "Read the case study",
+  pipelineLabel: `${signatureProject.title} pipeline`,
+};
+
 export const education = [
   { degree: "National Engineering Degree in Software Engineering", school: "University of Sousse — ISSATso", period: "2023 — 2026" },
   { degree: "Bachelor's Degree in Computer Engineering", school: "University of Kairouan — ISMAIK", period: "2020 — 2023" },
