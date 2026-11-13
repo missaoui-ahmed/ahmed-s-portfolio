@@ -12,3 +12,4 @@
 - Keep portfolio facts in `src/data/portfolio.ts`, sourced only from Ahmed's CV and explicit brief, so presentation changes cannot silently invent credentials or results.
 - Use a single scrolling home page with anchored sections and separate case-study routes because the brief explicitly requests one page while projects need shareable details.
 - Contact form composes an email in the visitor's mail app rather than claiming delivery, because no mail service is configured.
+- Give each project visual the frame that suits its source (wide, standard or portrait) and keep a visualNote labelling what it is, so a screenshot, photograph or illustration is never cropped into a shape that hides part of it.

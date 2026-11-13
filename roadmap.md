@@ -5,3 +5,4 @@
 - [x] Verify project layouts and case-study navigation on desktop and mobile.
 - [x] Recompose and verify the complete portfolio at 320px, 375px, 390px, and 430px.
 - [x] Place the ATPU product screenshot in the ATPU Management Platform card and case study, cleaned of the screen-recording band, Windows watermark and mouse cursor.
+- [x] Place the robot prototype photograph in the Intelligent Reception Robot card and case study, framed portrait so the whole device shows.
