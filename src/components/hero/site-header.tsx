@@ -70,14 +70,14 @@ export function SiteHeader() {
           >
             <Linkedin size={18} />
           </a>
-          <Button variant="portfolioOutline" size="sm" className="hero-action font-display" asChild>
+          <Button variant="portfolioOutline" size="sm" className="font-display" asChild>
             <a href={`#${CONTACT_ID}`}>{contactLabel}</a>
           </Button>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="hero-action lg:hidden"
+          className="lg:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           aria-controls="mobile-navigation"

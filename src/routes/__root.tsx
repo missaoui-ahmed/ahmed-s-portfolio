@@ -104,9 +104,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 // Runs before first paint. When motion is allowed it adds `pipeline-anim`, which hides the hero
-// pipeline until its client timeline plays. If the timeline never mounts (script failure), the
-// class is removed after 4s so the server-rendered final state shows. No JS: never added.
-const pipelineMotionScript = `try{var d=document.documentElement;if(!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("pipeline-anim");setTimeout(function(){if(!d.hasAttribute("data-pipeline-ready"))d.classList.remove("pipeline-anim")},4000)}}catch(e){}`;
+// pipeline until its client timeline plays. If the component has not mounted within 1.2s (slow
+// network or failed script), the class is removed so the server-rendered final state shows, and
+// the component then skips the animation: it only plays if the class is still there when it
+// mounts, so glyphs that are already visible are never hidden again. No JS: never added.
+// The 1.2s deadline counts from navigation start (performance.now), not from when this script runs:
+// it waits for the stylesheets above it, so on a slow connection it may run late or not hide at all.
+const pipelineMotionScript = `try{var d=document.documentElement,left=1200-performance.now();if(left>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("pipeline-anim");setTimeout(function(){if(!d.hasAttribute("data-pipeline-ready"))d.classList.remove("pipeline-anim")},left)}}catch(e){}`;
 
 function RootShell({ children }: { children: ReactNode }) {
   return (

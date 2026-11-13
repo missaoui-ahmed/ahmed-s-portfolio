@@ -19,7 +19,7 @@ export function Hero() {
               {hero.intro}
             </p>
             <div className="mt-6 grid gap-3 min-[400px]:grid-cols-2 sm:flex sm:flex-wrap">
-              <Button variant="portfolio" size="lg" className="hero-action px-5" asChild>
+              <Button variant="portfolio" size="lg" className="px-5" asChild>
                 <a
                   href={cvAsset.url}
                   target="_blank"
@@ -29,7 +29,7 @@ export function Hero() {
                   {hero.cvLabel} <Download aria-hidden="true" />
                 </a>
               </Button>
-              <Button variant="portfolioOutline" size="lg" className="hero-action px-5" asChild>
+              <Button variant="portfolioOutline" size="lg" className="px-5" asChild>
                 <Link to="/projects/$slug" params={{ slug: signature.slug }}>
                   {hero.caseStudyLabel}
                 </Link>

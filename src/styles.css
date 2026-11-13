@@ -116,10 +116,6 @@
   .pipeline-seg { left: 4.5px; width: calc(100% + 1rem); height: 1.5px; margin: -.75px 0 0; transform-origin: left; }
 }
 
-/* Hero and header buttons: the shared Button swaps the outline for a 1px ring that disappears on the
-   teal fill, so these get a clear outline. Unlayered, so it wins over the Tailwind utility. */
-.hero-action:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
-
 /* Pre-animation state, only while <html> has .pipeline-anim (see __root.tsx). */
 .pipeline-anim .hero-pipeline [data-a], .pipeline-anim .hero-pipeline .pipeline-dot { opacity: 0; }
 .pipeline-anim .hero-pipeline .pipeline-num { opacity: .35; }

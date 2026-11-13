@@ -6,7 +6,9 @@ import { glyphFor } from "./pipeline-glyphs";
  * The server renders the finished diagram. A tiny inline script in __root.tsx adds
  * `pipeline-anim` to <html> before first paint (only when motion is allowed), which hides
  * the animated parts; this component then plays one timeline and removes the class.
- * If this component never mounts, the inline script removes the class after 4s.
+ * If this component has not mounted within 1.2s, the inline script removes the class and the
+ * final state shows; mounting later finds no class and settles without animating, so visible
+ * glyphs are never hidden again.
  */
 
 const ANIM_CLASS = "pipeline-anim";
