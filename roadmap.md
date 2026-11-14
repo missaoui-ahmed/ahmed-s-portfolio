@@ -6,3 +6,5 @@
 - [x] Recompose and verify the complete portfolio at 320px, 375px, 390px, and 430px.
 - [x] Place the ATPU product screenshot in the ATPU Management Platform card and case study, cleaned of the screen-recording band, Windows watermark and mouse cursor.
 - [x] Place the robot prototype photograph in the Intelligent Reception Robot card and case study, framed portrait so the whole device shows.
+- [x] Motion polish, part 1: visible button focus ring site-wide; hero headline, entrance and stat counters as CSS keyframes; scroll-driven section and About reveals. Layout unchanged, all content visible without JavaScript or with reduced motion.
+- [x] Motion polish, part 3: transform-only spring hovers for mouse users (buttons, What I do and Skills cards, contact links, project images) and a full-screen mobile menu dialog with focus trap, Escape, scroll lock and focus return.

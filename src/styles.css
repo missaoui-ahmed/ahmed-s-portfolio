@@ -78,11 +78,184 @@
 .project-visual img { transition: transform .5s ease; backface-visibility: hidden; }
 .project-card:hover .project-visual img { transform: scale(1.045); }
 .timeline-line { background: linear-gradient(to bottom, var(--primary), var(--line)); }
-.reveal { animation: rise-in .7s ease both; }
-@keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 640px) {
   .page-shell { width: min(100% - 36px, 1320px); }
   .ambient-grid { background-size: 48px 48px; opacity: .16; }
   input, textarea { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+/* Motion
+   Every hidden "before" state below applies only while <html> has .motion. The inline script in
+   __root.tsx adds it before first paint, never with reduced motion and never without JavaScript,
+   and removes it again on any uncaught error. Server HTML therefore always renders fully visible.
+   - Every animation uses fill `backwards`: it can hide an element only before and while it runs.
+     Once finished nothing is held, so the element's own, fully visible style applies again and
+     renders exactly as it does without motion.
+   - Hero, headline and counters: time-based keyframes.
+   - Section reveals and About words: scroll-driven (no JavaScript at all). Browsers without view()
+     timelines skip them and show everything. */
+@property --stat { syntax: "<integer>"; inherits: false; initial-value: 0; }
+:root { --t0: 0ms; --ease-out: cubic-bezier(.16, 1, .3, 1); }
+
+/* Headline words sit in clip masks at render time; inline-blocks on the baseline keep the text's line breaks. */
+.mask-word, .mask-word-in { display: inline-block; }
+.stat-anim { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html.motion .hero-in { animation: hero-rise var(--hero-dur, 700ms) var(--ease-out) calc(var(--t0) + var(--hero-delay, 0ms)) backwards; }
+  /* The clip only exists while its word is rising. */
+  html.motion .mask-word { animation: mask-clip 900ms linear calc(var(--t0) + 100ms + var(--w, 0) * 60ms) backwards; }
+  html.motion .mask-word-in { animation: mask-rise 900ms var(--ease-out) calc(var(--t0) + 100ms + var(--w, 0) * 60ms) backwards; }
+
+  /* Counters: the real number stays in the DOM and is only held transparent while the aria-hidden
+     overlay counts; the overlay is hidden by default and only visible while its animation runs. */
+  html.motion .stat-real { animation: stat-hold 900ms linear calc(var(--t0) + var(--hero-delay, 0ms)) backwards; }
+  html.motion .stat-anim {
+    display: block; visibility: hidden; position: absolute; inset: 0; pointer-events: none; counter-reset: stat var(--stat);
+    animation: stat-count 900ms var(--ease-out) calc(var(--t0) + var(--hero-delay, 0ms)) backwards;
+  }
+  html.motion .stat-anim::before { content: counter(stat, decimal-leading-zero) / ""; }
+  /* Returning to the home page client-side: the intro already played on this page load. */
+  html.hero-seen .hero-in, html.hero-seen .mask-word, html.hero-seen .mask-word-in, html.hero-seen .stat-real, html.hero-seen .stat-anim { animation: none; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Siblings that enter together (cards in a row) stagger by --i, capped at 5 steps. */
+    html.motion [data-reveal] {
+      --ri: min(var(--i, 0), 5);
+      animation-name: reveal-rise;
+      animation-timing-function: var(--ease-out);
+      animation-fill-mode: backwards;
+      animation-timeline: view();
+      animation-range: entry calc(var(--ri) * 6%) entry calc(45% + var(--ri) * 6%);
+    }
+    html.motion [data-reveal="clip"] { animation-name: reveal-clip; }
+    /* About: one timeline for the whole block; each word brightens at its share (--wf) of the way in. */
+    html.motion .about-words { view-timeline: --about-words block; }
+    html.motion .reveal-word {
+      animation: reveal-word linear backwards;
+      animation-timeline: --about-words;
+      animation-range: entry calc(var(--wf) * 75%) entry calc(var(--wf) * 75% + 25%);
+    }
+  }
+}
+
+@keyframes hero-rise { from { opacity: 0; transform: translateY(var(--hero-y, 16px)); } }
+@keyframes mask-clip { from, to { clip-path: inset(-0.12em -0.12em -0.26em -0.12em); } }
+@keyframes mask-rise { from { transform: translateY(115%); } }
+@keyframes stat-hold { from, to { opacity: 0; } }
+@keyframes stat-count { from { --stat: 0; visibility: visible; } to { --stat: var(--to); visibility: visible; } }
+@keyframes reveal-rise { from { opacity: 0; transform: translateY(24px); } }
+@keyframes reveal-clip { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes reveal-word { from { opacity: .15; } }
+/* Intro loader (components/motion/intro-loader.tsx)
+   display:none unless the inline script added html.intro. Its whole timeline is CSS: the counter and
+   line run for 1s, the panel slides up from 1.12s and is hidden at 1.82s, and a second, independent
+   animation hides it at 2.4s regardless. JavaScript only removes it afterwards. */
+@counter-style intro-pad { system: extends decimal; pad: 3 "0"; }
+@property --intro-n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+.intro-loader, .intro-count-anim { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The hero waits for the panel: it starts as the panel leaves. */
+  html.motion.intro { --t0: 1250ms; }
+  html.motion.intro .intro-loader {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    position: fixed; inset: 0; z-index: 100;
+    padding-bottom: clamp(32px, 9vh, 104px);
+    background: var(--background); color: var(--foreground);
+    animation: intro-exit 700ms cubic-bezier(.76, 0, .24, 1) 1120ms forwards,
+      intro-hide 1ms linear 1820ms forwards,
+      intro-failsafe 1ms linear 2400ms forwards;
+  }
+  html.motion.intro .intro-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  html.motion.intro .intro-text { animation: intro-text-in 300ms var(--ease-out) backwards, intro-text-out 200ms ease-in 1000ms forwards; }
+  html.motion.intro .intro-name { margin: 0; font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 600; line-height: 1.05; }
+  html.motion.intro .intro-role { margin: 14px 0 0; color: var(--muted-foreground); }
+  html.motion.intro .intro-count { position: relative; margin: 0; font-size: clamp(2.25rem, 8vw, 6rem); line-height: 1; color: var(--primary); text-align: right; font-variant-numeric: tabular-nums; }
+  /* Same rule as the stats: the real "100" is DOM text, only held transparent while the overlay counts. */
+  html.motion.intro .intro-count-real { animation: intro-hold 1000ms linear backwards; }
+  html.motion.intro .intro-count-anim {
+    display: block; visibility: hidden; position: absolute; inset: 0; counter-reset: intro var(--intro-n);
+    animation: intro-count 1000ms cubic-bezier(.65, 0, .35, 1) backwards;
+  }
+  html.motion.intro .intro-count-anim::before { content: counter(intro, intro-pad) / ""; }
+  html.motion.intro .intro-line { width: min(100% - 48px, 1320px); height: 1px; margin: 22px auto 0; background: var(--line); }
+  html.motion.intro .intro-line-fill { display: block; height: 100%; background: var(--primary); transform-origin: left; animation: intro-line 1000ms cubic-bezier(.65, 0, .35, 1) backwards; }
+}
+@media (max-width: 640px) {
+  html.motion.intro .intro-line { width: min(100% - 36px, 1320px); }
+}
+@keyframes intro-exit { to { transform: translateY(-100%); } }
+/* Same value in every keyframe: hidden from the moment the delay ends, whatever the computed progress. */
+@keyframes intro-hide { from, to { visibility: hidden; pointer-events: none; } }
+@keyframes intro-failsafe { from, to { visibility: hidden; pointer-events: none; } }
+@keyframes intro-text-in { from { opacity: 0; transform: translateY(12px); } }
+@keyframes intro-text-out { to { opacity: 0; } }
+@keyframes intro-hold { from, to { opacity: 0; } }
+@keyframes intro-count { from { --intro-n: 0; visibility: visible; } to { --intro-n: 100; visibility: visible; } }
+@keyframes intro-line { from { transform: scaleX(0); } }
+
+/* Lenis (components/motion/smooth-scroll.tsx) adds .lenis to <html> while it runs. Its smooth
+   scrolling replaces the native `scroll-behavior: smooth`, which would fight it. Without Lenis but
+   with motion allowed, native smooth scrolling stays; with reduced motion it is auto (rule above). */
+html.lenis, html.lenis body { height: auto; }
+html.lenis { scroll-behavior: auto; }
+/* Opening the page on a #hash jumps there instantly (inline script; removed once Lenis has placed it). */
+html.hash-load { scroll-behavior: auto; }
+html.lenis.lenis-stopped { overflow: clip; }
+html.lenis.lenis-smooth iframe { pointer-events: none; }
+/* Hovers: transform only (`translate`, which composes with any reveal `transform`), so no hover
+   can move layout. Only for a real mouse and with motion allowed. Hover-in uses a spring
+   (~6% overshoot, 500-600ms); release eases back over 300ms. */
+:root { --spring: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017 20.3%, 1.051 23.9%, 1.06 27%, 1.054 30.4%, 1.024 39.4%, 1.009 45.4%, 0.998 54.5%, 0.997 64.2%, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-button], [data-hover-card] {
+    transition-property: color, background-color, border-color, outline-color, translate;
+    transition-duration: 150ms, 150ms, 150ms, 150ms, 300ms;
+    transition-timing-function: ease, ease, ease, ease, var(--ease-out);
+  }
+  [data-button]:hover, [data-hover-card]:hover {
+    transition-duration: 150ms, 150ms, 150ms, 150ms, 500ms;
+    transition-timing-function: ease, ease, ease, ease, var(--spring);
+  }
+  [data-button]:hover { translate: 0 -2px; }
+  [data-hover-card]:hover { translate: 0 -4px; }
+
+  [data-button] svg, [data-hover-link] svg { transition: translate 300ms var(--ease-out); }
+  [data-button]:hover svg, [data-hover-link]:hover svg { transition: translate 500ms var(--spring); }
+  [data-button]:hover svg.lucide-arrow-up-right { translate: 2px -2px; }
+  [data-button]:hover svg.lucide-arrow-right { translate: 2px 0; }
+  [data-hover-link]:hover svg { translate: 3px 0; }
+  [data-hover-link]:hover svg.lucide-arrow-up-right { translate: 3px -3px; }
+
+  /* The existing project-image zoom (Tailwind v4 `scale`) keeps its size; only its easing becomes the spring. */
+  .project-visual img { transition-property: transform, translate, scale, rotate; transition-duration: 300ms; transition-timing-function: var(--ease-out); }
+  .project-visual:hover img { transition-duration: 600ms; transition-timing-function: var(--spring); }
+}
+/* Keyboard focus gets the same nudges as hover, on top of the focus outline. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-button]:focus-visible { translate: 0 -2px; }
+  [data-button]:focus-visible svg.lucide-arrow-up-right { translate: 2px -2px; }
+  [data-button]:focus-visible svg.lucide-arrow-right { translate: 2px 0; }
+  [data-hover-link]:focus-visible svg { translate: 3px 0; }
+  [data-hover-link]:focus-visible svg.lucide-arrow-up-right { translate: 3px -3px; }
+}
+
+/* Mobile menu (components/motion/mobile-menu.tsx): a full-screen dialog in existing tokens. It
+   only exists once JavaScript runs; with reduced motion it opens and closes instantly. */
+.mobile-menu { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; background: var(--background); color: var(--foreground); }
+.mobile-menu[hidden] { display: none; }
+.mobile-menu-links { display: flex; flex-direction: column; margin-top: 16px; }
+.mobile-menu-link { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: clamp(1.75rem, 8vw, 2.5rem); font-weight: 600; line-height: 1.15; transition: color 150ms ease; }
+.mobile-menu-link:hover { color: var(--primary); }
+.mobile-menu-foot { display: flex; align-items: center; gap: 20px; margin-top: auto; padding-block: 28px; }
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu[data-state="open"] { animation: menu-in 550ms cubic-bezier(.76, 0, .24, 1) backwards; }
+  .mobile-menu[data-state="open"] .mobile-menu-link { animation: menu-link-in 600ms var(--ease-out) calc(250ms + var(--i, 0) * 60ms) backwards; }
+  .mobile-menu[data-state="closing"] { animation: menu-out 400ms cubic-bezier(.76, 0, .24, 1) forwards; }
+}
+@keyframes menu-in { from { transform: translateY(-100%); } }
+@keyframes menu-out { to { transform: translateY(-100%); } }
+@keyframes menu-link-in { from { opacity: 0; transform: translateY(40px); } }
