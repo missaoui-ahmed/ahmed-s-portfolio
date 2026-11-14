@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "@tanstack/react-router";
 import Lenis from "lenis";
+import { setLenis, unlockScroll } from "./scroll-lock";
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
@@ -33,8 +34,12 @@ export function SmoothScroll() {
         smoothWheel: true,
         syncTouch: false,
       });
+      setLenis(lenis);
     };
     const destroy = () => {
+      // Release any overlay lock first so the page is never left unscrollable.
+      unlockScroll();
+      setLenis(null);
       lenis?.destroy();
       lenis = null;
     };

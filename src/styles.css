@@ -206,3 +206,56 @@ html.lenis { scroll-behavior: auto; }
 html.hash-load { scroll-behavior: auto; }
 html.lenis.lenis-stopped { overflow: clip; }
 html.lenis.lenis-smooth iframe { pointer-events: none; }
+/* Hovers: transform only (`translate`, which composes with any reveal `transform`), so no hover
+   can move layout. Only for a real mouse and with motion allowed. Hover-in uses a spring
+   (~6% overshoot, 500-600ms); release eases back over 300ms. */
+:root { --spring: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017 20.3%, 1.051 23.9%, 1.06 27%, 1.054 30.4%, 1.024 39.4%, 1.009 45.4%, 0.998 54.5%, 0.997 64.2%, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-button], [data-hover-card] {
+    transition-property: color, background-color, border-color, outline-color, translate;
+    transition-duration: 150ms, 150ms, 150ms, 150ms, 300ms;
+    transition-timing-function: ease, ease, ease, ease, var(--ease-out);
+  }
+  [data-button]:hover, [data-hover-card]:hover {
+    transition-duration: 150ms, 150ms, 150ms, 150ms, 500ms;
+    transition-timing-function: ease, ease, ease, ease, var(--spring);
+  }
+  [data-button]:hover { translate: 0 -2px; }
+  [data-hover-card]:hover { translate: 0 -4px; }
+
+  [data-button] svg, [data-hover-link] svg { transition: translate 300ms var(--ease-out); }
+  [data-button]:hover svg, [data-hover-link]:hover svg { transition: translate 500ms var(--spring); }
+  [data-button]:hover svg.lucide-arrow-up-right { translate: 2px -2px; }
+  [data-button]:hover svg.lucide-arrow-right { translate: 2px 0; }
+  [data-hover-link]:hover svg { translate: 3px 0; }
+  [data-hover-link]:hover svg.lucide-arrow-up-right { translate: 3px -3px; }
+
+  /* The existing project-image zoom (Tailwind v4 `scale`) keeps its size; only its easing becomes the spring. */
+  .project-visual img { transition-property: transform, translate, scale, rotate; transition-duration: 300ms; transition-timing-function: var(--ease-out); }
+  .project-visual:hover img { transition-duration: 600ms; transition-timing-function: var(--spring); }
+}
+/* Keyboard focus gets the same nudges as hover, on top of the focus outline. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-button]:focus-visible { translate: 0 -2px; }
+  [data-button]:focus-visible svg.lucide-arrow-up-right { translate: 2px -2px; }
+  [data-button]:focus-visible svg.lucide-arrow-right { translate: 2px 0; }
+  [data-hover-link]:focus-visible svg { translate: 3px 0; }
+  [data-hover-link]:focus-visible svg.lucide-arrow-up-right { translate: 3px -3px; }
+}
+
+/* Mobile menu (components/motion/mobile-menu.tsx): a full-screen dialog in existing tokens. It
+   only exists once JavaScript runs; with reduced motion it opens and closes instantly. */
+.mobile-menu { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; background: var(--background); color: var(--foreground); }
+.mobile-menu[hidden] { display: none; }
+.mobile-menu-links { display: flex; flex-direction: column; margin-top: 16px; }
+.mobile-menu-link { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: clamp(1.75rem, 8vw, 2.5rem); font-weight: 600; line-height: 1.15; transition: color 150ms ease; }
+.mobile-menu-link:hover { color: var(--primary); }
+.mobile-menu-foot { display: flex; align-items: center; gap: 20px; margin-top: auto; padding-block: 28px; }
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu[data-state="open"] { animation: menu-in 550ms cubic-bezier(.76, 0, .24, 1) backwards; }
+  .mobile-menu[data-state="open"] .mobile-menu-link { animation: menu-link-in 600ms var(--ease-out) calc(250ms + var(--i, 0) * 60ms) backwards; }
+  .mobile-menu[data-state="closing"] { animation: menu-out 400ms cubic-bezier(.76, 0, .24, 1) forwards; }
+}
+@keyframes menu-in { from { transform: translateY(-100%); } }
+@keyframes menu-out { to { transform: translateY(-100%); } }
+@keyframes menu-link-in { from { opacity: 0; transform: translateY(40px); } }
