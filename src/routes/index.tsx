@@ -9,6 +9,7 @@ import { IntroLoader } from "@/components/motion/intro-loader";
 import { MobileMenu } from "@/components/motion/mobile-menu";
 import cvAsset from "@/assets/Ahmed-Missaoui-CV.pdf.asset.json";
 import { certifications, contact, education, experience, navigation, services, skills } from "@/data/portfolio";
+import { absoluteUrl, homeJsonLd } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,14 +19,13 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
       { property: "og:description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: absoluteUrl("/") },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Ahmed Missaoui | Software Engineer — Full-Stack & AI Systems" },
       { name: "twitter:description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
     ],
-    // Canonical placeholder: relative until a public domain exists.
-    links: [{ rel: "canonical", href: "/" }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Person", name: "Ahmed Missaoui", jobTitle: "Software Engineer", email: "mailto:" + contact.email, sameAs: [contact.github, contact.linkedin] }) }],
+    links: [{ rel: "canonical", href: absoluteUrl("/") }],
+    scripts: [homeJsonLd()],
   }), component: Index,
 });
 

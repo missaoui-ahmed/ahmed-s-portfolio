@@ -3,6 +3,27 @@ import booksImage from "@/assets/bookhaven.webp.asset.json";
 import atpuImage from "@/assets/atpu-site.webp.asset.json";
 import robotPhoto from "@/assets/robot-prototype.webp.asset.json";
 
+// Published origin, no trailing slash. Every canonical, og:url, sitemap, robots.txt and llms.txt
+// link is built from this one value. Placeholder until the public domain is confirmed.
+export const siteUrl = "https://YOUR-PUBLISHED-URL";
+
+// The same strings the home page already shows in its title, description and hero.
+export const profile = {
+  name: "Ahmed Missaoui",
+  jobTitle: "Software Engineer",
+  headline: "Software Engineer — Full-Stack & AI Systems",
+  location: "Tunisia",
+  description: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures.",
+};
+
+// 1200×630 share card in public/, made from profile.name and profile.headline only.
+export const shareImage = {
+  path: "/og-image.png",
+  width: 1200,
+  height: 630,
+  alt: "Ahmed Missaoui — Software Engineer — Full-Stack & AI Systems",
+};
+
 export const contact = {
   email: "missaouiiahmed@gmail.com",
   linkedin: "https://linkedin.com/in/ahmed-missaoui",
