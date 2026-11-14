@@ -149,3 +149,60 @@
 @keyframes reveal-rise { from { opacity: 0; transform: translateY(24px); } }
 @keyframes reveal-clip { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
 @keyframes reveal-word { from { opacity: .15; } }
+/* Intro loader (components/motion/intro-loader.tsx)
+   display:none unless the inline script added html.intro. Its whole timeline is CSS: the counter and
+   line run for 1s, the panel slides up from 1.12s and is hidden at 1.82s, and a second, independent
+   animation hides it at 2.4s regardless. JavaScript only removes it afterwards. */
+@counter-style intro-pad { system: extends decimal; pad: 3 "0"; }
+@property --intro-n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+.intro-loader, .intro-count-anim { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The hero waits for the panel: it starts as the panel leaves. */
+  html.motion.intro { --t0: 1250ms; }
+  html.motion.intro .intro-loader {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    position: fixed; inset: 0; z-index: 100;
+    padding-bottom: clamp(32px, 9vh, 104px);
+    background: var(--background); color: var(--foreground);
+    animation: intro-exit 700ms cubic-bezier(.76, 0, .24, 1) 1120ms forwards,
+      intro-hide 1ms linear 1820ms forwards,
+      intro-failsafe 1ms linear 2400ms forwards;
+  }
+  html.motion.intro .intro-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  html.motion.intro .intro-text { animation: intro-text-in 300ms var(--ease-out) backwards, intro-text-out 200ms ease-in 1000ms forwards; }
+  html.motion.intro .intro-name { margin: 0; font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 600; line-height: 1.05; }
+  html.motion.intro .intro-role { margin: 14px 0 0; color: var(--muted-foreground); }
+  html.motion.intro .intro-count { position: relative; margin: 0; font-size: clamp(2.25rem, 8vw, 6rem); line-height: 1; color: var(--primary); text-align: right; font-variant-numeric: tabular-nums; }
+  /* Same rule as the stats: the real "100" is DOM text, only held transparent while the overlay counts. */
+  html.motion.intro .intro-count-real { animation: intro-hold 1000ms linear backwards; }
+  html.motion.intro .intro-count-anim {
+    display: block; visibility: hidden; position: absolute; inset: 0; counter-reset: intro var(--intro-n);
+    animation: intro-count 1000ms cubic-bezier(.65, 0, .35, 1) backwards;
+  }
+  html.motion.intro .intro-count-anim::before { content: counter(intro, intro-pad) / ""; }
+  html.motion.intro .intro-line { width: min(100% - 48px, 1320px); height: 1px; margin: 22px auto 0; background: var(--line); }
+  html.motion.intro .intro-line-fill { display: block; height: 100%; background: var(--primary); transform-origin: left; animation: intro-line 1000ms cubic-bezier(.65, 0, .35, 1) backwards; }
+}
+@media (max-width: 640px) {
+  html.motion.intro .intro-line { width: min(100% - 36px, 1320px); }
+}
+@keyframes intro-exit { to { transform: translateY(-100%); } }
+/* Same value in every keyframe: hidden from the moment the delay ends, whatever the computed progress. */
+@keyframes intro-hide { from, to { visibility: hidden; pointer-events: none; } }
+@keyframes intro-failsafe { from, to { visibility: hidden; pointer-events: none; } }
+@keyframes intro-text-in { from { opacity: 0; transform: translateY(12px); } }
+@keyframes intro-text-out { to { opacity: 0; } }
+@keyframes intro-hold { from, to { opacity: 0; } }
+@keyframes intro-count { from { --intro-n: 0; visibility: visible; } to { --intro-n: 100; visibility: visible; } }
+@keyframes intro-line { from { transform: scaleX(0); } }
+
+/* Lenis (components/motion/smooth-scroll.tsx) adds .lenis to <html> while it runs. Its smooth
+   scrolling replaces the native `scroll-behavior: smooth`, which would fight it. Without Lenis but
+   with motion allowed, native smooth scrolling stays; with reduced motion it is auto (rule above). */
+html.lenis, html.lenis body { height: auto; }
+html.lenis { scroll-behavior: auto; }
+/* Opening the page on a #hash jumps there instantly (inline script; removed once Lenis has placed it). */
+html.hash-load { scroll-behavior: auto; }
+html.lenis.lenis-stopped { overflow: clip; }
+html.lenis.lenis-smooth iframe { pointer-events: none; }

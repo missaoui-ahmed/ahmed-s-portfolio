@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -106,7 +107,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 // Runs before first paint. It is the only switch for motion: hidden "before" states in styles.css
 // apply only while <html> has `motion`. Never added with reduced motion or without JavaScript, and
 // removed on any uncaught error so content falls back to fully visible.
-const motionScript = `try{var d=document.documentElement;if(!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("motion");var off=function(){d.classList.remove("motion","intro")};addEventListener("error",off);addEventListener("unhandledrejection",off)}}catch(e){}`;
+// `intro` (the loader) is added only on "/" with no #hash, once per browser session; if
+// sessionStorage throws, the loader is skipped. `hash-load` makes the browser's own jump to a
+// #hash on load instant instead of smooth-scrolling from the top; SmoothScroll removes it.
+const motionScript = `try{var d=document.documentElement;if(!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("motion");if(location.hash)d.classList.add("hash-load");try{if(location.pathname==="/"&&!location.hash&&!sessionStorage.getItem("intro-seen")){sessionStorage.setItem("intro-seen","1");d.classList.add("intro")}}catch(e){}var off=function(){d.classList.remove("motion","intro")};addEventListener("error",off);addEventListener("unhandledrejection",off)}}catch(e){}`;
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -129,6 +133,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SmoothScroll />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
