@@ -30,3 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local visual baselines and Playwright output
+screenshots/
+.playwright-mcp/

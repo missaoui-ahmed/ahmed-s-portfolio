@@ -78,11 +78,74 @@
 .project-visual img { transition: transform .5s ease; backface-visibility: hidden; }
 .project-card:hover .project-visual img { transform: scale(1.045); }
 .timeline-line { background: linear-gradient(to bottom, var(--primary), var(--line)); }
-.reveal { animation: rise-in .7s ease both; }
-@keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 640px) {
   .page-shell { width: min(100% - 36px, 1320px); }
   .ambient-grid { background-size: 48px 48px; opacity: .16; }
   input, textarea { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+/* Motion
+   Every hidden "before" state below applies only while <html> has .motion. The inline script in
+   __root.tsx adds it before first paint, never with reduced motion and never without JavaScript,
+   and removes it again on any uncaught error. Server HTML therefore always renders fully visible.
+   - Every animation uses fill `backwards`: it can hide an element only before and while it runs.
+     Once finished nothing is held, so the element's own, fully visible style applies again and
+     renders exactly as it does without motion.
+   - Hero, headline and counters: time-based keyframes.
+   - Section reveals and About words: scroll-driven (no JavaScript at all). Browsers without view()
+     timelines skip them and show everything. */
+@property --stat { syntax: "<integer>"; inherits: false; initial-value: 0; }
+:root { --t0: 0ms; --ease-out: cubic-bezier(.16, 1, .3, 1); }
+
+/* Headline words sit in clip masks at render time; inline-blocks on the baseline keep the text's line breaks. */
+.mask-word, .mask-word-in { display: inline-block; }
+.stat-anim { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html.motion .hero-in { animation: hero-rise var(--hero-dur, 700ms) var(--ease-out) calc(var(--t0) + var(--hero-delay, 0ms)) backwards; }
+  /* The clip only exists while its word is rising. */
+  html.motion .mask-word { animation: mask-clip 900ms linear calc(var(--t0) + 100ms + var(--w, 0) * 60ms) backwards; }
+  html.motion .mask-word-in { animation: mask-rise 900ms var(--ease-out) calc(var(--t0) + 100ms + var(--w, 0) * 60ms) backwards; }
+
+  /* Counters: the real number stays in the DOM and is only held transparent while the aria-hidden
+     overlay counts; the overlay is hidden by default and only visible while its animation runs. */
+  html.motion .stat-real { animation: stat-hold 900ms linear calc(var(--t0) + var(--hero-delay, 0ms)) backwards; }
+  html.motion .stat-anim {
+    display: block; visibility: hidden; position: absolute; inset: 0; pointer-events: none; counter-reset: stat var(--stat);
+    animation: stat-count 900ms var(--ease-out) calc(var(--t0) + var(--hero-delay, 0ms)) backwards;
+  }
+  html.motion .stat-anim::before { content: counter(stat, decimal-leading-zero) / ""; }
+  /* Returning to the home page client-side: the intro already played on this page load. */
+  html.hero-seen .hero-in, html.hero-seen .mask-word, html.hero-seen .mask-word-in, html.hero-seen .stat-real, html.hero-seen .stat-anim { animation: none; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Siblings that enter together (cards in a row) stagger by --i, capped at 5 steps. */
+    html.motion [data-reveal] {
+      --ri: min(var(--i, 0), 5);
+      animation-name: reveal-rise;
+      animation-timing-function: var(--ease-out);
+      animation-fill-mode: backwards;
+      animation-timeline: view();
+      animation-range: entry calc(var(--ri) * 6%) entry calc(45% + var(--ri) * 6%);
+    }
+    html.motion [data-reveal="clip"] { animation-name: reveal-clip; }
+    /* About: one timeline for the whole block; each word brightens at its share (--wf) of the way in. */
+    html.motion .about-words { view-timeline: --about-words block; }
+    html.motion .reveal-word {
+      animation: reveal-word linear backwards;
+      animation-timeline: --about-words;
+      animation-range: entry calc(var(--wf) * 75%) entry calc(var(--wf) * 75% + 25%);
+    }
+  }
+}
+
+@keyframes hero-rise { from { opacity: 0; transform: translateY(var(--hero-y, 16px)); } }
+@keyframes mask-clip { from, to { clip-path: inset(-0.12em -0.12em -0.26em -0.12em); } }
+@keyframes mask-rise { from { transform: translateY(115%); } }
+@keyframes stat-hold { from, to { opacity: 0; } }
+@keyframes stat-count { from { --stat: 0; visibility: visible; } to { --stat: var(--to); visibility: visible; } }
+@keyframes reveal-rise { from { opacity: 0; transform: translateY(24px); } }
+@keyframes reveal-clip { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes reveal-word { from { opacity: .15; } }

@@ -103,11 +103,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Runs before first paint. It is the only switch for motion: hidden "before" states in styles.css
+// apply only while <html> has `motion`. Never added with reduced motion or without JavaScript, and
+// removed on any uncaught error so content falls back to fully visible.
+const motionScript = `try{var d=document.documentElement;if(!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("motion");var off=function(){d.classList.remove("motion","intro")};addEventListener("error",off);addEventListener("unhandledrejection",off)}}catch(e){}`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning: the inline script changes <html>'s class before hydration.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: motionScript }} />
       </head>
       <body>
         {children}
