@@ -39,10 +39,23 @@ function Tag({ children }: { children: string }) { return <span className="inlin
 function Header() {
   const [active, setActive] = useState("home");
   useEffect(() => {
-    const ids = ["home", ...navigation.map(([, id]) => id)];
-    const observer = new IntersectionObserver(entries => { const visible = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio); if (visible[0]) setActive(visible[0].target.id); }, { rootMargin: "-20% 0px -55% 0px", threshold: [0, .2, .5] });
-    ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
-    return () => observer.disconnect();
+    // Active = the last section whose top has passed a line 35% down the viewport (the last one at
+    // the page bottom). Position-based rather than intersection-ratio based, because a section much
+    // taller than the viewport (Projects) never reaches a high ratio and lost to shorter neighbours.
+    const sections = ["home", ...navigation.map(([, id]) => id)].map(id => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      const line = window.innerHeight * 0.35;
+      const current = atBottom ? sections[sections.length - 1] : sections.filter(el => el.getBoundingClientRect().top <= line).pop();
+      setActive(current?.id ?? "home");
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); cancelAnimationFrame(frame); };
   }, []);
   return <header className="site-header fixed inset-x-0 top-0 z-40"><div className="page-shell grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:h-[74px] lg:flex lg:justify-between lg:gap-8">
     <a href="#home" className="group inline-flex shrink-0 items-center gap-2 font-mono text-lg font-semibold" aria-label="Ahmed Missaoui home"><span className="text-primary">&lt;/&gt;</span><span>Ahmed<span className="text-primary">.</span></span></a>
