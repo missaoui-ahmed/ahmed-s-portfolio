@@ -134,3 +134,9 @@ export function llmsTxt() {
   ];
   return lines.join("\n");
 }
+
+/** robots.txt: the same allow-all rules as before, plus the absolute sitemap location. */
+export function robotsTxt() {
+  const agents = ["Googlebot", "Bingbot", "Twitterbot", "facebookexternalhit", "*"];
+  return `${agents.map((agent) => `User-agent: ${agent}\nAllow: /\n`).join("\n")}\nSitemap: ${absoluteUrl("/sitemap.xml")}\n`;
+}

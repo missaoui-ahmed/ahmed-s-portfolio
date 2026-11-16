@@ -4,8 +4,8 @@ import atpuImage from "@/assets/atpu-site.png";
 import robotPhoto from "@/assets/robot-prototype.jpg";
 
 // Published origin, no trailing slash. Every canonical, og:url, sitemap, robots.txt and llms.txt
-// link is built from this one value. Placeholder until the public domain is confirmed.
-export const siteUrl = "https://YOUR-PUBLISHED-URL";
+// link is built from this one value.
+export const siteUrl = "https://missaoui-ahmed.github.io";
 
 // The same strings the home page already shows in its title, description and hero.
 export const profile = {
