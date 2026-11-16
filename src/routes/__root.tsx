@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { shareImageMeta } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -84,8 +85,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Ahmed Missaoui is a Software Engineer specializing in full-stack development, AI systems, RAG, document intelligence, computer vision and modern backend architectures." },
       { name: "author", content: "Ahmed Missaoui" },
       { property: "og:site_name", content: "Ahmed Missaoui" },
-            { property: "og:type", content: "website" },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...shareImageMeta,
     ],
     links: [
       {

@@ -3,12 +3,13 @@ import { ArrowLeft, ArrowUpRight, Github, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectArchitecture } from "@/components/project-architecture";
 import { contact, projects } from "@/data/portfolio";
+import { absoluteUrl, projectJsonLd, projectPath } from "@/lib/seo";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: ({ params }) => { const project = projects.find(p => p.slug === params.slug); if (!project) throw notFound(); return project; },
-  head: ({ loaderData, params }) => ({ links: [{ rel: "canonical", href: `/projects/${params.slug}` }], meta: [
+  head: ({ loaderData, params }) => ({ links: [{ rel: "canonical", href: absoluteUrl(projectPath(params.slug)) }], scripts: loaderData ? [projectJsonLd(loaderData)] : [], meta: [
     ...(loaderData ? [] : [{ name: "robots", content: "noindex" }]),
-    { property: "og:url", content: `/projects/${params.slug}` },
+    { property: "og:url", content: absoluteUrl(projectPath(params.slug)) },
     { name: "twitter:title", content: loaderData ? `${loaderData.title} | Ahmed Missaoui` : "Project not found | Ahmed Missaoui" },
     { name: "twitter:description", content: loaderData?.description ?? "Explore software engineering projects by Ahmed Missaoui." },
     { title: loaderData ? `${loaderData.title} | Ahmed Missaoui` : "Project not found | Ahmed Missaoui" },

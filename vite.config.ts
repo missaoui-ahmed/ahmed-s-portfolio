@@ -12,20 +12,29 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // so they keep the default SSR build unchanged.
 const githubPages = process.env["GITHUB_PAGES"] === "true";
 
+// Server routes in src/routes that return text files. Listed in `pages` so the static build
+// writes them even though no page links to them.
+const generatedFiles = ["/robots.txt", "/sitemap.xml", "/llms.txt"];
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
     ...(githubPages && {
+      pages: [{ path: "/" }, ...generatedFiles.map(path => ({ path }))],
       prerender: {
         enabled: true,
         crawlLinks: true,
         autoSubfolderIndex: true,
         failOnError: true,
         // The link crawler also follows file links (e.g. the CV PDF); rendering those would
-        // overwrite the real file in dist/client/assets, so only prerender extensionless routes.
-        filter: ({ path }: { path: string }) => !/\.[a-z0-9]+$/i.test(path.split(/[?#]/)[0] ?? path),
+        // overwrite the real file in dist/client/assets, so only prerender extensionless routes,
+        // plus the generated text routes (written to dist/client as robots.txt, sitemap.xml, llms.txt).
+        filter: ({ path }: { path: string }) => {
+          const clean = path.split(/[?#]/)[0] ?? path;
+          return generatedFiles.includes(clean) || !/\.[a-z0-9]+$/i.test(clean);
+        },
       },
     }),
   },
