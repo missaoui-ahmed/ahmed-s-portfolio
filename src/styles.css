@@ -73,7 +73,7 @@
 .ambient-grid { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 72px 72px; mask-image: linear-gradient(to bottom, black, transparent 95%); }
 .topo-texture { background-image: url("/topo.svg"); background-size: 900px 900px; background-repeat: repeat; }
 .profile-frame { border-radius: 112px 8px 112px 8px; box-shadow: inset 0 0 0 1px var(--border), 0 20px 80px oklch(0.07 0 0 / 20%); }
-.avatar-mark { background: radial-gradient(circle at 25% 20%, var(--accent), var(--surface-strong)); border: 1px solid var(--primary); }
+.avatar-photo { border: 2px solid var(--primary); background: var(--surface-strong); }
 .project-visual { background: var(--surface); overflow: hidden; }
 .project-visual img { transition: transform .5s ease; backface-visibility: hidden; }
 .project-card:hover .project-visual img { transform: scale(1.045); }
